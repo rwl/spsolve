@@ -63,13 +63,13 @@ mod tests {
         ];
         let mut control = amd::defaults();
 
-        let (p, mut info) = amd::order(n as i32, &a_p, &a_i, &mut control).unwrap();
+        let (p, _info) = amd::order(n as i32, &a_p, &a_i, &mut control).unwrap();
 
         println!("P = {:?}", p);
         // Output:
         //   P = [0, 3, 2, 4, 1]
 
-        amd::info(&mut info);
+        // amd::info(&mut info);
 
         [0, 3, 2, 4, 1].iter().zip(p).for_each(|(&expect, p)| {
             assert_eq!(expect, p);

@@ -1,16 +1,19 @@
 use crate::amd;
 use crate::Solver;
 use anyhow::{format_err, Result};
+use lufact::GP;
 
 /// Solver based on [AMD](https://crates.io/crates/amd_sys) and [LUFact](https://crates.io/crates/lufact).
 pub struct LUFact {
     pub control: Vec<f64>,
+    pub gp: GP,
 }
 
 impl Default for LUFact {
     fn default() -> Self {
         Self {
             control: amd::defaults(),
+            gp: GP::default(),
         }
     }
 }
@@ -25,14 +28,16 @@ impl Solver<i32, f64> for LUFact {
         b: &mut [f64],
         trans: bool,
     ) -> Result<()> {
-        let mut control = self.control.clone();
+        let mut gp = self.gp.clone();
+        if gp.col_perm.is_none() {
+            let mut control = self.control.clone();
 
-        let (p, _info) = amd::order(n as i32, &a_p, &a_i, &mut control)
-            .map_err(|rv| format_err!("amd error: {}", rv))
-            .unwrap();
+            let (p, _info) = amd::order(n as i32, &a_p, &a_i, &mut control)
+                .map_err(|rv| format_err!("amd error: {}", rv))
+                .unwrap();
 
-        let mut gp = lufact::GP::default(); // TODO: clone
-        gp.col_perm = Some(p);
+            gp.col_perm = Some(p);
+        }
 
         let mut a_desc = lufact::CSC {
             m: n,
