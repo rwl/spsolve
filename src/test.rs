@@ -1,5 +1,5 @@
 use crate::Solver;
-use std::fmt::Display;
+use anyhow::Result;
 
 /// Simple 10x10 matrix test.
 ///
@@ -19,7 +19,10 @@ use std::fmt::Display;
 ///
 ///     x = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0}
 /// ```
-pub fn simple_test<P, F, E: Display, S: Solver<usize, f64, P, F, E>>(solver: S) -> Result<(), E> {
+pub fn simple_solver_test<S>(solver: S) -> Result<()>
+where
+    S: Solver<usize, f64>,
+{
     let n = 10;
     let a_i = vec![
         0, 7, 8, 1, 4, 9, 2, 9, 3, 6, 7, 8, 9, 1, 4, 5, 3, 6, 9, 0, 3, 7, 8, 0, 3, 7, 8, 1, 2, 3,
@@ -35,9 +38,7 @@ pub fn simple_test<P, F, E: Display, S: Solver<usize, f64, P, F, E>>(solver: S) 
         0.403, 0.28, 0.55, 1.504, 0.812, 1.32, 1.888, 1.168, 2.473, 3.695,
     ];
 
-    if let Err(err) = solver.solve(n, &a_i, &a_p, &a_x, &mut b, false) {
-        panic!("solve error: {}", err);
-    }
+    solver.solve(n, &a_i, &a_p, &a_x, &mut b, false)?;
 
     let x = b;
 

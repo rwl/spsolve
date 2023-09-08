@@ -1,5 +1,5 @@
-use crate::Solver;
-use anyhow::{format_err, Error, Result};
+use crate::{FactorSolver, Solver};
+use anyhow::{format_err, Result};
 use num_traits::{NumAssignOps, PrimInt};
 use rlu::{Scalar, LU};
 use std::fmt::Display;
@@ -11,24 +11,39 @@ pub struct RLU {
     options: rlu::Options,
 }
 
-impl<I, S> Solver<I, S, Vec<I>, LU<S>, Error> for RLU
+impl<I, S> Solver<I, S> for RLU
 where
     I: PrimInt + NumAssignOps + Display,
     S: Scalar,
 {
-    fn permute(&self, n: I, a_i: &[I], a_p: &[I]) -> Result<Option<Vec<I>>> {
+    fn solve(&self, n: I, a_i: &[I], a_p: &[I], a_x: &[S], b: &mut [S], trans: bool) -> Result<()> {
         let (p, _p_inv, _info) = amd::order::<I>(n, &a_p, &a_i, &self.control)
             .map_err(|st| format_err!("amd status: {:?}", st))?;
-        Ok(Some(p))
-    }
 
-    fn factor(&self, n: I, a_i: &[I], a_p: &[I], a_x: &[S], p: Option<&Vec<I>>) -> Result<LU<S>> {
-        let lu = rlu::factor(n, &a_i, &a_p, &a_x, p.map(|v| v.as_slice()), &self.options)
+        let lu = rlu::factor(n, &a_i, &a_p, &a_x, Some(&p), &self.options)
+            .map_err(|err| format_err!("factor error: {}", err))?;
+
+        rlu::solve(&lu, b, trans).map_err(|err| format_err!("solve error: {}", err))?;
+
+        Ok(())
+    }
+}
+
+impl<I, S> FactorSolver<I, S, LU<S>> for RLU
+where
+    I: PrimInt + NumAssignOps + Display,
+    S: Scalar,
+{
+    fn factor(&self, n: I, a_i: &[I], a_p: &[I], a_x: &[S]) -> Result<LU<S>> {
+        let (p, _p_inv, _info) = amd::order::<I>(n, &a_p, &a_i, &self.control)
+            .map_err(|st| format_err!("amd status: {:?}", st))?;
+
+        let lu = rlu::factor(n, &a_i, &a_p, &a_x, Some(&p), &self.options)
             .map_err(|err| format_err!("factor error: {}", err))?;
         Ok(lu)
     }
 
-    fn factor_solve(&self, f: &LU<S>, b: &mut [S], trans: bool) -> Result<()> {
+    fn solve(&self, f: &LU<S>, b: &mut [S], trans: bool) -> Result<()> {
         rlu::solve(f, b, trans).map_err(|err| format_err!("solve error: {}", err))?;
         Ok(())
     }
@@ -37,12 +52,12 @@ where
 #[cfg(test)]
 mod tests {
     use super::RLU;
-    use crate::test::simple_test;
+    use crate::test::simple_solver_test;
     use anyhow::Result;
 
     #[test]
     fn test_rlu() -> Result<()> {
         let solver = RLU::default();
-        simple_test(solver)
+        simple_solver_test(solver)
     }
 }
