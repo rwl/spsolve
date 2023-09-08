@@ -6,6 +6,11 @@ mod traits;
 #[cfg(feature = "rlu")]
 pub mod rlu;
 
+#[cfg(feature = "lufact")]
+pub mod amd;
+#[cfg(feature = "lufact")]
+pub mod lufact;
+
 #[cfg(test)]
 pub mod test;
 

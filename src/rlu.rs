@@ -7,8 +7,8 @@ use std::fmt::Display;
 /// Solver based on [AMD](https://crates.io/crates/amd) and [RLU](https://crates.io/crates/rlu).
 #[derive(Default)]
 pub struct RLU {
-    control: amd::Control,
-    options: rlu::Options,
+    pub control: amd::Control,
+    pub options: rlu::Options,
 }
 
 impl<I, S> Solver<I, S> for RLU
@@ -58,6 +58,6 @@ mod tests {
     #[test]
     fn test_rlu() -> Result<()> {
         let solver = RLU::default();
-        simple_solver_test(solver)
+        simple_solver_test::<usize, f64, RLU>(solver)
     }
 }
