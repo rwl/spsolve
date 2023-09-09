@@ -1,7 +1,7 @@
-use crate::amd;
 use crate::Solver;
 use anyhow::{format_err, Result};
 use lufact::GP;
+use suitesparse_sys::{amd_defaults, amd_order, AMD_CONTROL, AMD_INFO, AMD_OK};
 
 /// Solver based on [AMD](https://crates.io/crates/amd_sys) and [LUFact](https://crates.io/crates/lufact).
 pub struct LUFact {
@@ -11,8 +11,12 @@ pub struct LUFact {
 
 impl Default for LUFact {
     fn default() -> Self {
+        let mut control = vec![0.0; AMD_CONTROL as usize];
+        unsafe {
+            amd_defaults(control.as_mut_ptr());
+        }
         Self {
-            control: amd::defaults(),
+            control,
             gp: GP::default(),
         }
     }
@@ -30,12 +34,22 @@ impl Solver<i32, f64> for LUFact {
     ) -> Result<()> {
         let mut gp = self.gp.clone();
         if gp.col_perm.is_none() {
+            let mut p = vec![0; n as usize];
             let mut control = self.control.clone();
-
-            let (p, _info) = amd::order(n as i32, &a_p, &a_i, &mut control)
-                .map_err(|rv| format_err!("amd error: {}", rv))
-                .unwrap();
-
+            let mut info = vec![0.0; AMD_INFO as usize];
+            unsafe {
+                let rv = amd_order(
+                    n as i32,
+                    a_p.as_ptr(),
+                    a_i.as_ptr(),
+                    p.as_mut_ptr(),
+                    control.as_mut_ptr(),
+                    info.as_mut_ptr(),
+                );
+                if rv != AMD_OK as i32 {
+                    return Err(format_err!("amd error: {}", rv));
+                }
+            }
             gp.col_perm = Some(p);
         }
 
@@ -82,7 +96,7 @@ mod tests {
     use anyhow::Result;
 
     #[test]
-    fn test_rlu() -> Result<()> {
+    fn test_lufact() -> Result<()> {
         let solver = LUFact::default();
         simple_solver_test(solver)
     }

@@ -7,9 +7,10 @@ mod traits;
 pub mod rlu;
 
 #[cfg(feature = "lufact")]
-pub mod amd;
-#[cfg(feature = "lufact")]
 pub mod lufact;
+
+#[cfg(feature = "klu")]
+pub mod klu;
 
 #[cfg(test)]
 pub mod test;

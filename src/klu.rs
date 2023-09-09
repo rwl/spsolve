@@ -1,0 +1,63 @@
+use anyhow::{format_err, Result};
+use std::alloc::{alloc, Layout};
+use suitesparse_sys::{
+    klu_analyze, klu_common, klu_defaults, klu_factor, klu_free_numeric, klu_free_symbolic,
+    klu_numeric, klu_solve, klu_symbolic, klu_tsolve,
+};
+
+use crate::Solver;
+
+pub struct KLU {}
+
+impl Default for KLU {
+    fn default() -> Self {
+        Self {}
+    }
+}
+
+impl Solver<i32, f64> for KLU {
+    fn solve(
+        &self,
+        n: i32,
+        a_i: &[i32],
+        a_p: &[i32],
+        a_x: &[f64],
+        b: &mut [f64],
+        trans: bool,
+    ) -> Result<()> {
+        unsafe {
+            let common = alloc(Layout::new::<klu_common>()) as *mut klu_common;
+            if common.is_null() {
+                return Err(format_err!("error allocating common"));
+            }
+            if klu_defaults(common) != 1 {
+                return Err(format_err!("error calling klu_defaults"));
+            }
+
+            let mut symbolic = klu_analyze(n, a_p.as_ptr(), a_i.as_ptr(), common);
+            if symbolic.is_null() {
+                return Err(format_err!("error calling klu_analyze"));
+            }
+
+            let mut numeric =
+                klu_factor(a_p.as_ptr(), a_i.as_ptr(), a_x.as_ptr(), symbolic, common);
+            if numeric.is_null() {
+                klu_free_symbolic(&mut symbolic as *mut *mut klu_symbolic, common);
+                return Err(format_err!("error calling klu_factor"));
+            }
+
+            let nrhs = b.len() as i32 / n;
+            let rv = if trans {
+                klu_tsolve(symbolic, numeric, n, nrhs, b.as_mut_ptr(), common)
+            } else {
+                klu_solve(symbolic, numeric, n, nrhs, b.as_mut_ptr(), common)
+            };
+            klu_free_numeric(&mut numeric as *mut *mut klu_numeric, common);
+            klu_free_symbolic(&mut symbolic as *mut *mut klu_symbolic, common);
+            if rv != 1 {
+                return Err(format_err!("error calling klu_solve"));
+            }
+        }
+        Ok(())
+    }
+}
