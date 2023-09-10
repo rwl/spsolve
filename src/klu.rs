@@ -1,4 +1,5 @@
 use anyhow::{format_err, Result};
+use num_traits::ToPrimitive;
 use std::alloc::{alloc, Layout};
 use suitesparse_sys::{
     klu_analyze, klu_common, klu_defaults, klu_factor, klu_free_numeric, klu_free_symbolic,
@@ -15,16 +16,23 @@ impl Default for KLU {
     }
 }
 
-impl Solver<i32, f64> for KLU {
+impl<I> Solver<I, f64> for KLU
+where
+    I: ToPrimitive,
+{
     fn solve(
         &self,
-        n: i32,
-        a_i: &[i32],
-        a_p: &[i32],
+        n: I,
+        a_i: &[I],
+        a_p: &[I],
         a_x: &[f64],
         b: &mut [f64],
         trans: bool,
     ) -> Result<()> {
+        let n = n.to_i32().unwrap();
+        let a_i: Vec<i32> = a_i.iter().map(|i| i.to_i32().unwrap()).collect();
+        let a_p: Vec<i32> = a_p.iter().map(|i| i.to_i32().unwrap()).collect();
+
         unsafe {
             let common = alloc(Layout::new::<klu_common>()) as *mut klu_common;
             if common.is_null() {

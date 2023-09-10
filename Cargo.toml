@@ -7,9 +7,12 @@ edition = "2021"
 [dependencies]
 anyhow = "1"
 
+num-traits = { version = "0.2", optional = true }
+sprs = { version = "0.11.1", optional = true }
+num-complex = { version = "0.4", optional = true }
+
 rlu = { version = "0.4", optional = true }
 amd = { version = "0.2", optional = true }
-num-traits = { version = "0.2", optional = true }
 
 lufact = { version = "0.1.2", optional = true }
 
@@ -17,11 +20,20 @@ suitesparse_sys = { version = "0.1", optional = true }
 
 [dev-dependencies]
 num-traits = "0.2"
+criterion = "0.5"
 
 [features]
+matrix = ["num-traits", "sprs", "num-complex"]
 rlu = ["dep:amd", "dep:rlu", "num-traits"]
-lufact = ["suitesparse_sys/amd", "dep:lufact"]
+lufact = ["num-traits", "suitesparse_sys/amd", "dep:lufact"]
 klu = ["suitesparse_sys/klu"]
+
+default = []
+
+[[bench]]
+name = "solve_bench"
+harness = false
+required-features = ["matrix"]
 
 [[example]]
 name = "solve"

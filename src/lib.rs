@@ -12,6 +12,9 @@ pub mod lufact;
 #[cfg(feature = "klu")]
 pub mod klu;
 
+#[cfg(feature = "matrix")]
+pub mod matrix;
+
 #[cfg(test)]
 pub mod test;
 

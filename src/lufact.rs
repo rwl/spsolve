@@ -1,6 +1,7 @@
 use crate::Solver;
 use anyhow::{format_err, Result};
 use lufact::GP;
+use num_traits::ToPrimitive;
 use suitesparse_sys::{amd_defaults, amd_order, AMD_CONTROL, AMD_INFO, AMD_OK};
 
 /// Solver based on [AMD](https://crates.io/crates/amd_sys) and [LUFact](https://crates.io/crates/lufact).
@@ -22,16 +23,23 @@ impl Default for LUFact {
     }
 }
 
-impl Solver<i32, f64> for LUFact {
+impl<I> Solver<I, f64> for LUFact
+where
+    I: ToPrimitive,
+{
     fn solve(
         &self,
-        n: i32,
-        a_i: &[i32],
-        a_p: &[i32],
+        n: I,
+        a_i: &[I],
+        a_p: &[I],
         a_x: &[f64],
         b: &mut [f64],
         trans: bool,
     ) -> Result<()> {
+        let n = n.to_i32().unwrap();
+        let a_i: Vec<i32> = a_i.iter().map(|i| i.to_i32().unwrap()).collect();
+        let a_p: Vec<i32> = a_p.iter().map(|i| i.to_i32().unwrap()).collect();
+
         let mut gp = self.gp.clone();
         if gp.col_perm.is_none() {
             let mut p = vec![0; n as usize];
@@ -39,7 +47,7 @@ impl Solver<i32, f64> for LUFact {
             let mut info = vec![0.0; AMD_INFO as usize];
             unsafe {
                 let rv = amd_order(
-                    n as i32,
+                    n,
                     a_p.as_ptr(),
                     a_i.as_ptr(),
                     p.as_mut_ptr(),
@@ -55,11 +63,11 @@ impl Solver<i32, f64> for LUFact {
 
         let mut a_desc = lufact::CSC {
             m: n,
-            n,
+            n: n,
             nnz: a_x.len() as i32,
             base: 0,
-            colptr: a_p.to_vec(),
-            rowind: a_i.to_vec(),
+            colptr: a_p,
+            rowind: a_i,
         };
 
         let mut lu = match lufact::dgstrf(&gp, n, n, &a_x, &mut a_desc) {
@@ -98,6 +106,6 @@ mod tests {
     #[test]
     fn test_lufact() -> Result<()> {
         let solver = LUFact::default();
-        simple_solver_test(solver)
+        simple_solver_test::<i32, f64, LUFact>(solver)
     }
 }
