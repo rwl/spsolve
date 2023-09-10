@@ -53,6 +53,24 @@ fn benchmark_inputs(c: &mut Criterion, group_name: &str, inputs: &[Input]) {
             });
         });
 
+        #[cfg(feature = "csparse")]
+        group.bench_with_input(
+            BenchmarkId::new("csparse::solve", input.n),
+            input,
+            |b, d| {
+                b.iter(|| {
+                    let mut b = rhs.clone();
+
+                    let solver = spsolve::csparse::CSparse::default();
+                    solver
+                        .solve(d.n, &d.a_i, &d.a_p, &d.a_x, &mut b, d.trans)
+                        .unwrap();
+
+                    black_box(b);
+                });
+            },
+        );
+
         #[cfg(feature = "klu")]
         group.bench_with_input(BenchmarkId::new("klu::solve", input.n), input, |b, d| {
             b.iter(|| {

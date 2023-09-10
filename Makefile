@@ -3,12 +3,13 @@ all: bench
 BENCHMARK = solve_bench
 BASELINE = master
 # FEATURES = matrix,rlu,lufact,klu
-FEATURES = matrix,rlu,klu
+FEATURES = matrix,klu,csparse
 
 .PHONY: bench
 bench:
 	# cargo criterion
-	CRITERION_DEBUG=1 cargo bench --features $(FEATURES)
+	# CRITERION_DEBUG=0 cargo bench --features $(FEATURES)
+	cargo bench --features $(FEATURES)
 
 .PHONY: save
 save:

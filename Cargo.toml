@@ -27,6 +27,7 @@ matrix = ["num-traits", "sprs", "num-complex"]
 rlu = ["dep:amd", "dep:rlu", "num-traits"]
 lufact = ["num-traits", "suitesparse_sys/amd", "dep:lufact"]
 klu = ["suitesparse_sys/klu"]
+csparse = ["num-traits", "suitesparse_sys/cxsparse"]
 
 default = []
 

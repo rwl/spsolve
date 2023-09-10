@@ -12,6 +12,9 @@ pub mod lufact;
 #[cfg(feature = "klu")]
 pub mod klu;
 
+#[cfg(feature = "csparse")]
+pub mod csparse;
+
 #[cfg(feature = "matrix")]
 pub mod matrix;
 
