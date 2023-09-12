@@ -69,3 +69,22 @@ where
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::KLU;
+    use crate::test;
+    use anyhow::Result;
+
+    #[test]
+    fn simple_test() -> Result<()> {
+        let solver = KLU::default();
+        test::simple_solver_test::<usize, f64, KLU>(solver)
+    }
+
+    #[test]
+    fn test_solver() -> Result<()> {
+        let solver = KLU::default();
+        test::test_bbus(&solver, 1, 1e-8)
+    }
+}

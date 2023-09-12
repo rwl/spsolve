@@ -52,12 +52,18 @@ where
 #[cfg(test)]
 mod tests {
     use super::RLU;
-    use crate::test::simple_solver_test;
+    use crate::test;
     use anyhow::Result;
 
     #[test]
-    fn test_rlu() -> Result<()> {
+    fn simple_test() -> Result<()> {
         let solver = RLU::default();
-        simple_solver_test::<usize, f64, RLU>(solver)
+        test::simple_solver_test::<usize, f64, RLU>(solver)
+    }
+
+    #[test]
+    fn test_solver() -> Result<()> {
+        let solver = RLU::default();
+        test::test_bbus(&solver, 1, 1e-11)
     }
 }
