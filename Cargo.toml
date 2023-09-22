@@ -5,6 +5,7 @@ description = "Solve sparse systems of linear equations"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/rwl/spsolve"
 edition = "2021"
+exclude = ["matrix/powers/ACTIVSg70k*"]
 
 [dependencies]
 anyhow = "1"
