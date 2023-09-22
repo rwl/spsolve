@@ -84,6 +84,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "matrix")]
     fn test_solver() -> Result<()> {
         let solver = RLU::default();
         test::test_bbus(&solver, 1, 1e-11)

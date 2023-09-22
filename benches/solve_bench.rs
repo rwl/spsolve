@@ -102,6 +102,24 @@ fn benchmark_inputs(c: &mut Criterion, group_name: &str, inputs: &[Input]) {
                 });
             },
         );
+
+        #[cfg(feature = "basiclu")]
+        group.bench_with_input(
+            BenchmarkId::new("basiclu::solve", input.n),
+            input,
+            |b, d| {
+                b.iter(|| {
+                    let mut b = rhs.clone();
+
+                    let solver = spsolve::basiclu::BasicLU::default();
+                    solver
+                        .solve(d.n, &d.a_i, &d.a_p, &d.a_x, &mut b, d.trans)
+                        .unwrap();
+
+                    black_box(b);
+                });
+            },
+        );
     }
     group.finish();
 }

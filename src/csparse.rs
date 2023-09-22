@@ -77,6 +77,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "matrix")]
     fn test_solver() -> Result<()> {
         let mut solver = CSparse::default();
         solver.order = 2;

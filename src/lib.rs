@@ -18,6 +18,9 @@ pub mod csparse;
 #[cfg(feature = "rsparse")]
 pub mod rsparse;
 
+#[cfg(feature = "basiclu")]
+pub mod basiclu;
+
 #[cfg(feature = "matrix")]
 pub mod matrix;
 

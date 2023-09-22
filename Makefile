@@ -2,22 +2,21 @@ all: bench
 
 BENCHMARK = solve_bench
 BASELINE = master
-# FEATURES = matrix,rlu,lufact,klu,csparse,rsparse
-FEATURES = matrix,csparse,rsparse
+FEATURES = csparse,rsparse,basiclu,klu
 
 .PHONY: bench
 bench:
 	# cargo criterion
-	# CRITERION_DEBUG=0 cargo bench --features $(FEATURES)
+	# CRITERION_DEBUG=0 cargo bench --features matrix,$(FEATURES)
 	cargo bench --features $(FEATURES)
 
 .PHONY: save
 save:
-	cargo bench --bench $(BENCHMARK) --features $(FEATURES) -- --save-baseline $(BASELINE)
+	cargo bench --bench $(BENCHMARK) --features matrix,$(FEATURES) -- --save-baseline $(BASELINE)
 
 .PHONY: baseline
 baseline:
-	cargo bench --bench $(BENCHMARK) --features $(FEATURES) -- --baseline $(BASELINE)
+	cargo bench --bench $(BENCHMARK) --features matrix,$(FEATURES) -- --baseline $(BASELINE)
 
 .PHONY: setup
 setup:

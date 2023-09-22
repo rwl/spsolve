@@ -12,6 +12,7 @@ They can be enabled using their associated feature.
 The following solvers are currently supported:
 
 - CSparse (C, LGPL)
+- BasicLU (C, MIT)
 - KLU (C, LGPL)
 - RLU (Rust, BSD)
 - LUFact (Fortran, Apache/MIT)
