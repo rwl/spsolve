@@ -7,6 +7,30 @@ use sprs::num_matrixmarket::{MatrixMarketConjugate, MatrixMarketRead};
 use std::ops::{Add, Neg};
 use std::path::PathBuf;
 
+pub fn activsg200_bbus(csc: bool) -> (usize, Vec<usize>, Vec<usize>, Vec<f64>) {
+    read_matrix_data("powers", "ACTIVSg200_Bbus", csc)
+}
+
+pub fn activsg200_ybus(csc: bool) -> (usize, Vec<usize>, Vec<usize>, Vec<Complex64>) {
+    read_matrix_data("powers", "ACTIVSg200_Ybus", csc)
+}
+
+pub fn activsg200_jac(csc: bool) -> (usize, Vec<usize>, Vec<usize>, Vec<f64>) {
+    read_matrix_data("powers", "ACTIVSg200_Jac", csc)
+}
+
+pub fn activsg500_bbus(csc: bool) -> (usize, Vec<usize>, Vec<usize>, Vec<f64>) {
+    read_matrix_data("powers", "ACTIVSg500_Bbus", csc)
+}
+
+pub fn activsg500_ybus(csc: bool) -> (usize, Vec<usize>, Vec<usize>, Vec<Complex64>) {
+    read_matrix_data("powers", "ACTIVSg500_Ybus", csc)
+}
+
+pub fn activsg500_jac(csc: bool) -> (usize, Vec<usize>, Vec<usize>, Vec<f64>) {
+    read_matrix_data("powers", "ACTIVSg500_Jac", csc)
+}
+
 pub fn activsg2000_bbus(csc: bool) -> (usize, Vec<usize>, Vec<usize>, Vec<f64>) {
     read_matrix_data("powers", "ACTIVSg2000_Bbus", csc)
 }
