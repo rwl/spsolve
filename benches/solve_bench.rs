@@ -84,6 +84,24 @@ fn benchmark_inputs(c: &mut Criterion, group_name: &str, inputs: &[Input]) {
                 black_box(b);
             });
         });
+
+        #[cfg(feature = "rsparse")]
+        group.bench_with_input(
+            BenchmarkId::new("rsparse::solve", input.n),
+            input,
+            |b, d| {
+                b.iter(|| {
+                    let mut b = rhs.clone();
+
+                    let solver = spsolve::rsparse::RSparse::default();
+                    solver
+                        .solve(d.n, &d.a_i, &d.a_p, &d.a_x, &mut b, d.trans)
+                        .unwrap();
+
+                    black_box(b);
+                });
+            },
+        );
     }
     group.finish();
 }
@@ -92,7 +110,7 @@ pub fn bbus_solve_benchmark(c: &mut Criterion) {
     let trans = false;
     let inputs = [
         matrix::activsg2000_bbus(!trans),
-        // matrix::activsg10k_bbus(!trans),
+        matrix::activsg10k_bbus(!trans),
         // matrix::activsg25k_bbus(!trans),
         // matrix::activsg70k_bbus(!trans),
     ]
