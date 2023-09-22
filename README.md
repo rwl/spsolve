@@ -22,6 +22,16 @@ A benchmark for comparing solver performance is included.
 Test matrix data can be accessed by enabling the `matrix` feature. 
 Solvers can be profiled using `cpuprofiler` and [pprof](github.com/google/pprof).
 
+## Benchmarks
+
+DC power flow B matrix (1x RHS):
+
+![lines](/target/criterion/solve(bbus,nrhs=1)/report/lines.svg)
+
+AC power flow Jacobian matrix (1x RHS):
+
+![lines](/target/criterion/solve(jac,nrhs=1)/report/lines.svg)
+
 ## License
 
 Licensed under either of the

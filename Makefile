@@ -2,7 +2,7 @@ all: bench
 
 BENCHMARK = solve_bench
 BASELINE = master
-FEATURES = csparse,rsparse,basiclu,klu
+FEATURES = csparse,basiclu,klu,rlu,lufact,rsparse
 
 .PHONY: bench
 bench:
