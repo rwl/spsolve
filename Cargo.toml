@@ -23,7 +23,7 @@ suitesparse_sys = { version = "0.1", optional = true }
 
 rsparse = { version = "0.2", optional = true }
 
-basiclu = { path = "../basiclu", optional = true }
+basiclu = { version = "0.1.1", optional = true }
 
 cpuprofiler = { version = "0.0.4", optional = true }
 
