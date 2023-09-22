@@ -2,6 +2,8 @@
 name = "spsolve"
 version = "0.1.0"
 description = "Solve sparse systems of linear equations"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/rwl/spsolve"
 edition = "2021"
 
 [dependencies]
