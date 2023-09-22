@@ -107,4 +107,11 @@ mod tests {
         let solver = LUFact::default();
         simple_solver_test::<i32, f64, LUFact>(solver)
     }
+
+    #[test]
+    #[cfg(feature = "matrix")]
+    fn test_solver() -> Result<()> {
+        let solver = LUFact::default();
+        crate::test::test_bbus(&solver, 1, 1e-11)
+    }
 }
