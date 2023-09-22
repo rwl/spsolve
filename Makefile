@@ -2,8 +2,8 @@ all: bench
 
 BENCHMARK = solve_bench
 BASELINE = master
-# FEATURES = matrix,rlu,lufact,klu
-FEATURES = matrix,klu,csparse
+# FEATURES = matrix,rlu,lufact,klu,csparse,rsparse
+FEATURES = matrix,csparse,rsparse
 
 .PHONY: bench
 bench:
@@ -22,6 +22,19 @@ baseline:
 .PHONY: setup
 setup:
 	cargo install cargo-criterion
+	go install github.com/google/pprof@latest
+
+
+spsolve.profile:
+	cargo run --features matrix,cpuprofiler,rlu --bin spsolve
+
+.PHONY: pprof
+pprof: spsolve.profile
+	pprof -http=:8080 target/debug/spsolve spsolve.profile
+
 
 clean:
+	rm -f spsolve.profile
+
+purge:
 	rm -rf ./target/criterion
