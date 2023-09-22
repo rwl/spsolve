@@ -16,12 +16,27 @@ where
     I: PrimInt + NumAssignOps + Display,
     S: Scalar,
 {
-    fn solve(&self, n: I, a_i: &[I], a_p: &[I], a_x: &[S], b: &mut [S], trans: bool) -> Result<()> {
-        let (p, _p_inv, _info) = amd::order::<I>(n, &a_p, &a_i, &self.control)
+    fn solve(
+        &self,
+        n: usize,
+        a_i: &[I],
+        a_p: &[I],
+        a_x: &[S],
+        b: &mut [S],
+        trans: bool,
+    ) -> Result<()> {
+        let (p, _p_inv, _info) = amd::order::<I>(I::from(n).unwrap(), &a_p, &a_i, &self.control)
             .map_err(|st| format_err!("amd status: {:?}", st))?;
 
-        let lu = rlu::factor(n, &a_i, &a_p, &a_x, Some(&p), &self.options)
-            .map_err(|err| format_err!("factor error: {}", err))?;
+        let lu = rlu::factor(
+            I::from(n).unwrap(),
+            &a_i,
+            &a_p,
+            &a_x,
+            Some(&p),
+            &self.options,
+        )
+        .map_err(|err| format_err!("factor error: {}", err))?;
 
         rlu::solve(&lu, b, trans).map_err(|err| format_err!("solve error: {}", err))?;
 
@@ -34,12 +49,19 @@ where
     I: PrimInt + NumAssignOps + Display,
     S: Scalar,
 {
-    fn factor(&self, n: I, a_i: &[I], a_p: &[I], a_x: &[S]) -> Result<LU<S>> {
-        let (p, _p_inv, _info) = amd::order::<I>(n, &a_p, &a_i, &self.control)
+    fn factor(&self, n: usize, a_i: &[I], a_p: &[I], a_x: &[S]) -> Result<LU<S>> {
+        let (p, _p_inv, _info) = amd::order::<I>(I::from(n).unwrap(), &a_p, &a_i, &self.control)
             .map_err(|st| format_err!("amd status: {:?}", st))?;
 
-        let lu = rlu::factor(n, &a_i, &a_p, &a_x, Some(&p), &self.options)
-            .map_err(|err| format_err!("factor error: {}", err))?;
+        let lu = rlu::factor(
+            I::from(n).unwrap(),
+            &a_i,
+            &a_p,
+            &a_x,
+            Some(&p),
+            &self.options,
+        )
+        .map_err(|err| format_err!("factor error: {}", err))?;
         Ok(lu)
     }
 

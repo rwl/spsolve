@@ -26,7 +26,7 @@ where
     F: Float,
     S: Solver<I, F>,
 {
-    let n: I = I::from(10).unwrap();
+    let n: usize = 10;
     let a_i: Vec<I> = [
         0, 7, 8, 1, 4, 9, 2, 9, 3, 6, 7, 8, 9, 1, 4, 5, 3, 6, 9, 0, 3, 7, 8, 0, 3, 7, 8, 1, 2, 3,
         6, 9,
@@ -59,10 +59,13 @@ where
 
     (1..=10).zip(x).for_each(|(i, x)| {
         let expect = (i as f64) / 10.0;
+        let actual = x.to_f64().unwrap();
         assert!(
-            f64::abs(x.to_f64().unwrap() - expect) < 1e-12,
-            "x[{}] error",
-            i - 1
+            f64::abs(actual - expect) < 1e-12,
+            "x[{}] error, expected {} actual {}",
+            i - 1,
+            expect,
+            actual
         );
     });
 

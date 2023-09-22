@@ -29,25 +29,24 @@ where
 {
     fn solve(
         &self,
-        n: I,
+        n: usize,
         a_i: &[I],
         a_p: &[I],
         a_x: &[f64],
         b: &mut [f64],
         trans: bool,
     ) -> Result<()> {
-        let n = n.to_i32().unwrap();
         let a_i: Vec<i32> = a_i.iter().map(|i| i.to_i32().unwrap()).collect();
         let a_p: Vec<i32> = a_p.iter().map(|i| i.to_i32().unwrap()).collect();
 
         let mut gp = self.gp.clone();
         if gp.col_perm.is_none() {
-            let mut p = vec![0; n as usize];
+            let mut p = vec![0; n];
             let mut control = self.control.clone();
             let mut info = vec![0.0; AMD_INFO as usize];
             unsafe {
                 let rv = amd_order(
-                    n,
+                    n as i32,
                     a_p.as_ptr(),
                     a_i.as_ptr(),
                     p.as_mut_ptr(),
@@ -62,15 +61,15 @@ where
         }
 
         let mut a_desc = lufact::CSC {
-            m: n,
-            n: n,
+            m: n as i32,
+            n: n as i32,
             nnz: a_x.len() as i32,
             base: 0,
             colptr: a_p,
             rowind: a_i,
         };
 
-        let mut lu = match lufact::dgstrf(&gp, n, n, &a_x, &mut a_desc) {
+        let mut lu = match lufact::dgstrf(&gp, n as i32, n as i32, &a_x, &mut a_desc) {
             Ok(lu) => lu,
             Err(rv) => {
                 return Err(format_err!("dgstrf error: {}", rv));
@@ -80,8 +79,8 @@ where
         let rv = lufact::dgstrs(
             &gp,
             if trans { 'T' } else { 'N' },
-            n,
-            b.len() as i32 / n,
+            n as i32,
+            (b.len() / n) as i32,
             &mut lu,
             1,
             1,

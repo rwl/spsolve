@@ -29,14 +29,14 @@ where
 {
     fn solve(
         &self,
-        n: I,
+        n: usize,
         a_i: &[I],
         a_p: &[I],
         a_x: &[f64],
         b: &mut [f64],
         _trans: bool,
     ) -> Result<()> {
-        let n = n.to_i32().unwrap();
+        let n = n as i32;
         let mut a_i: Vec<i32> = a_i.iter().map(|i| i.to_i32().unwrap()).collect();
         let mut a_p: Vec<i32> = a_p.iter().map(|i| i.to_i32().unwrap()).collect();
         let mut a_x = a_x.to_vec();
@@ -67,12 +67,20 @@ where
 #[cfg(test)]
 mod tests {
     use super::CSparse;
-    use crate::test::simple_solver_test;
+    use crate::test;
     use anyhow::Result;
 
     #[test]
     fn test_csparse() -> Result<()> {
         let solver = CSparse::default();
-        simple_solver_test::<i32, f64, CSparse>(solver)
+        test::simple_solver_test::<i32, f64, CSparse>(solver)
+    }
+
+    #[test]
+    fn test_solver() -> Result<()> {
+        let mut solver = CSparse::default();
+        solver.order = 2;
+        // solver.tol = 1e-15;
+        test::test_bbus(&solver, 1, 1e-10)
     }
 }

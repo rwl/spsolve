@@ -29,7 +29,7 @@ pub fn test_bbus(solver: &dyn Solver<usize, f64>, nrhs: usize, epsilon: f64) -> 
 
 fn test_solver<I, S>(
     solver: &dyn Solver<I, S>,
-    n: I,
+    n: usize,
     a_i: Vec<I>,
     a_p: Vec<I>,
     a_x: Vec<S>,
@@ -40,11 +40,10 @@ where
     I: sparsetools::Integer,
     S: sparsetools::Scalar,
 {
-    let un = n.to_usize().unwrap();
     let mut b = Vec::<S>::with_capacity(x.len());
 
-    for x_i in x.chunks_exact(un) {
-        let mut b_i = vec![S::zero(); n.to_usize().unwrap()];
+    for x_i in x.chunks_exact(n) {
+        let mut b_i = vec![S::zero(); n];
         if trans {
             csr_matvec(n, n, &a_p, &a_i, &a_x, x_i, &mut b_i);
         } else {

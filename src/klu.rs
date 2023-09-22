@@ -22,14 +22,14 @@ where
 {
     fn solve(
         &self,
-        n: I,
+        n: usize,
         a_i: &[I],
         a_p: &[I],
         a_x: &[f64],
         b: &mut [f64],
         trans: bool,
     ) -> Result<()> {
-        let n = n.to_i32().unwrap();
+        let n = n as i32;
         let a_i: Vec<i32> = a_i.iter().map(|i| i.to_i32().unwrap()).collect();
         let a_p: Vec<i32> = a_p.iter().map(|i| i.to_i32().unwrap()).collect();
 
