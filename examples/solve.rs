@@ -1,10 +1,10 @@
 use spsolve::klu::KLU;
 use spsolve::lufact::LUFact;
-use spsolve::rlu::RLU;
+use spsolve::gplu::GPLU;
 use spsolve::Solver;
 
 fn main() {
-    let rlu_solver = RLU::default();
+    let rlu_solver = GPLU::default();
     let lufact_solver = LUFact::default();
     let klu_solver = KLU::default();
     let solvers: Vec<&dyn Solver<i32, f64>> = vec![&rlu_solver, &lufact_solver, &klu_solver];

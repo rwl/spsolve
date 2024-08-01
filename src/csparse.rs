@@ -82,6 +82,6 @@ mod tests {
         let mut solver = CSparse::default();
         solver.order = 2;
         // solver.tol = 1e-15;
-        test::test_bbus(&solver, 1, 1e-10)
+        test::test_solver_bbus(&solver, 1, 1e-10)
     }
 }

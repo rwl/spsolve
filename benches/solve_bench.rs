@@ -31,7 +31,7 @@ fn benchmark_inputs(c: &mut Criterion, group_name: &str, inputs: &[Input], n_rhs
                 b.iter(|| {
                     let mut b = rhs.clone();
 
-                    let solver = spsolve::rlu::RLU::default();
+                    let solver = spsolve::gplu::GPLU::default();
                     solver
                         .solve(d.n, &d.a_i, &d.a_p, &d.a_x, &mut b, d.trans)
                         .unwrap();

@@ -12,7 +12,7 @@ fn main() {
     // let (n, a_p, a_i, a_x) = spsolve::matrix::activsg25k_bbus(!trans);
     let mut b: Vec<f64> = (0..n).map(|i| 1.0 + i as f64 / n as f64).collect();
 
-    let solver = spsolve::rlu::RLU::default();
+    let solver = spsolve::gplu::GPLU::default();
 
     let t0 = Instant::now();
 

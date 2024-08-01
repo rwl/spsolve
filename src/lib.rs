@@ -3,8 +3,8 @@
 
 mod traits;
 
-#[cfg(feature = "rlu")]
-pub mod rlu;
+#[cfg(feature = "gplu")]
+pub mod gplu;
 
 #[cfg(feature = "lufact")]
 pub mod lufact;
@@ -23,6 +23,9 @@ pub mod basiclu;
 
 #[cfg(feature = "matrix")]
 pub mod matrix;
+
+#[cfg(feature = "rlu")]
+pub mod rlu;
 
 #[cfg(test)]
 pub mod test;
